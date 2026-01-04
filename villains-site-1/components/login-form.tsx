@@ -7,8 +7,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
-// Use the actual Cloudflare URL for redirects
-const SITE_URL = 'https://code.anton-atom.com/Troublemakers/villains-site-1'
+// Get the base path from environment or default to empty for Vercel
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
+// Helper to get the full site URL
+function getSiteUrl() {
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}${BASE_PATH}`
+  }
+  return BASE_PATH
+}
 
 export function LoginForm() {
   const [email, setEmail] = useState('')
@@ -36,7 +44,7 @@ export function LoginForm() {
 
       if (data.session) {
         // Session created successfully, redirect to dashboard
-        window.location.href = `${SITE_URL}/dashboard`
+        window.location.href = `${getSiteUrl()}/dashboard`
       } else {
         setError('Login succeeded but no session was created')
         setIsLoading(false)
@@ -54,7 +62,7 @@ export function LoginForm() {
     setMessage(null)
 
     try {
-      const redirectUrl = `${SITE_URL}/auth/callback`
+      const redirectUrl = `${getSiteUrl()}/auth/callback`
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -85,7 +93,7 @@ export function LoginForm() {
     setMessage(null)
 
     try {
-      const redirectUrl = `${SITE_URL}/auth/callback`
+      const redirectUrl = `${getSiteUrl()}/auth/callback`
       
       const { error } = await supabase.auth.signInWithOtp({
         email,
